@@ -1,13 +1,25 @@
 #include "tests.h"
 
-// 练习1，实现库函数strlen
+
+//练习1，实现库函数strlen
 int my_strlen(char *str) {
     /**
      * 统计字符串的长度，太简单了。
      */
 
     // IMPLEMENT YOUR CODE HERE
-    return 0;
+
+    int count = 0;
+
+    while(str[count] != '\0'){
+
+        count++;
+
+    }
+
+    
+
+    return count;
 }
 
 
@@ -19,6 +31,20 @@ void my_strcat(char *str_1, char *str_2) {
      */
 
     // IMPLEMENT YOUR CODE HERE
+
+    int count1 = 0;
+    int count2 = 0;
+    
+    while(str_1[count1] != '\0'){
+        count1++;
+    }
+
+    while(str_2[count2] != '\0'){
+        str_1[count1] = str_2[count2];
+        str_1[count1 + 1] = '\0';
+        count1++;
+        count2++;
+    }
 }
 
 
@@ -31,7 +57,28 @@ char* my_strstr(char *s, char *p) {
      */
 
     // IMPLEMENT YOUR CODE HERE
-    return 0;
+
+    char* count2 = p;
+    for(char* count1 = s;*count1 != '\0';count1++){
+        if(*count1 == *count2){
+            char* temp1 = count1;
+            char* temp2 = count2;
+
+            while(*temp1 == *temp2 && *temp2 != '\0'){
+                temp1++;
+                temp2++;
+            }
+            if(*temp2 == '\0'){
+            return count1;
+           
+        }
+        }
+        
+    }
+
+    return nullptr;
+
+    
 }
 
 
@@ -97,6 +144,21 @@ void rgb2gray(float *in, float *out, int h, int w) {
 
     // IMPLEMENT YOUR CODE HERE
     // ...
+
+    for(int count1 = 0;count1 < h;count1++){
+        for(int count2 = 0;count2 < w;count2++){
+            int index1 = (count1 * w + count2) * 3;
+            int index2 = (count1 * w + count2);
+
+            float r = in[index1];
+            float g = in[index1 + 1];
+            float b = in[index1 + 2];
+
+            float grey = 0.2989*r +0.5870*g + 0.1140*b;
+
+            out[index2] = grey;
+        }
+    }
 }
 
 // 练习5，实现图像处理算法 resize：缩小或放大图像
@@ -196,8 +258,44 @@ void resize(float *in, float *out, int h, int w, int c, float scale) {
      *        所以需要对其进行边界检查
      */
 
-    int new_h = h * scale, new_w = w * scale;
     // IMPLEMENT YOUR CODE HERE
+
+    int new_h = static_cast<int>(h * scale);
+    int new_w = static_cast<int>(w * scale);
+
+    for(int y = 0;y < new_h;y++){
+        for(int x = 0;x < new_w;x++){
+            float x0 = x/scale;
+            float y0 = y/scale;
+
+            int x1 = static_cast<int>(x0);
+            int y1 = static_cast<int>(y0);
+            int x2 = x1 + 1 < w ? x1 + 1 : x1;
+            int y2 = y1 + 1 < h ? y1 + 1 : y1;
+
+            float dx = x0 - x1;
+            float dy = y0 - y1;
+            float dx1 = 1.0 - dx;
+            float dy1 = 1.0 - dy;
+
+            for(int count1 = 0;count1 < c;count1++){
+                float dx = x0 - x1;
+                float dy = y0 - y1;
+                float dx1 = 1.0 - dx;
+                float dy1 = 1.0 - dy;
+
+                float p1 = in[(y1 * w + x1) * c + count1];
+                float p2 = in[(y2 * w + x1) * c + count1];
+                float p3 = in[(y1 * w + x2) * c + count1];
+                float p4 = in[(y2 * w + x2) * c + count1];
+
+                float P = p1 * dx1 * dy1 + p2 * dx * dy1 + p3 * dx1 * dy + p4 * dx * dy;
+
+                int index = (y * new_w + x) * c + count1;
+                out[index] = P;
+            }
+        }
+    }
 
 }
 
